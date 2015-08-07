@@ -7,8 +7,8 @@ Moment-Generating Function
 The [moment-generating function](https://en.wikipedia.org/wiki/Moment-generating_function) for a [Laplace / Double Exponential](https://en.wikipedia.org/wiki/Laplace / Double Exponential_distribution) random variable is
 
 <div class="equation" align="center" data-raw-text="
-    M_X(t) := \mathbb{E}\!\left[e^{tX}\right]" data-equation="eq:mgf_function">
-	<img src="" alt="Moment-generating function (MGF) for a Laplace / Double Exponential distribution.">
+    M_X(t) := \mathbb{E}\!\left[e^{tX}\right] =  	\frac{\exp(\mu\,t)}{1-b^2\,t^2}\,\!\text{ for }|t|<1/b" data-equation="eq:mgf_function">
+	<img src="https://cdn.rawgit.com/distributions-io/laplace-mgf/9dda2260264d5f9e8e1843a29c7bc3109584bcf0/docs/img/eqn.svg" alt="Moment-generating function (MGF) for a Laplace / Double Exponential distribution.">
 	<br>
 </div>
 

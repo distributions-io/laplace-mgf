@@ -2,10 +2,10 @@ using Distributions
 using JSON
 
 mu = 0
-b = 1
+b = 0.9
 d = Laplace( mu,b )
 
-x = linspace( 1, 0, 25 )
+x = linspace( 0, 1, 25 )
 
 dmgf(t) = mgf(d, t )
 y = map( dmgf, x )

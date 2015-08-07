@@ -1,8 +1,8 @@
 using Distributions
 using JSON
 
-mu = 0
-b = 1
+mu = 1.2
+b = 0.1
 d = Laplace( mu,b )
 
 x = [ -5, -2.5, 0, 2.5, 5 ]

@@ -1,11 +1,11 @@
 using Distributions
 using JSON
 
-mu = 0
-b = 1
+mu = -2
+b = 0.2
 d = Laplace( mu,b )
 
-x = linspace( .5, -100, 100 )
+x = linspace( -4, 4, 100 )
 
 dmgf(t) = mgf(d, t )
 y = map( dmgf, x )
