@@ -7,12 +7,12 @@ Moment-Generating Function
 The [moment-generating function](https://en.wikipedia.org/wiki/Moment-generating_function) for a [Laplace / Double Exponential](https://en.wikipedia.org/wiki/Laplace / Double Exponential_distribution) random variable is
 
 <div class="equation" align="center" data-raw-text="
-    M_X(t) := \mathbb{E}\!\left[e^{tX}\right] =  	\frac{\exp(\mu\,t)}{1-b^2\,t^2}\,\!\text{ for }|t|<1/b" data-equation="eq:mgf_function">
+	M_X(t) := \mathbb{E}\!\left[e^{tX}\right] =  	\frac{\exp(\mu\,t)}{1-b^2\,t^2}\,\!\text{ for }|t|<1/b" data-equation="eq:mgf_function">
 	<img src="https://cdn.rawgit.com/distributions-io/laplace-mgf/9dda2260264d5f9e8e1843a29c7bc3109584bcf0/docs/img/eqn.svg" alt="Moment-generating function (MGF) for a Laplace / Double Exponential distribution.">
 	<br>
 </div>
 
-where `mu` is the location parameter and `b` is the scale parameter.
+where `mu` is the location parameter and `b` is the scale parameter. For `|t| >= 1/b`, the [MGF](https://en.wikipedia.org/wiki/Moment-generating_function) is undefined. In this case, this module returns `NaN`.
 
 ## Installation
 
@@ -40,36 +40,36 @@ var matrix = require( 'dstructs-matrix' ),
 	t,
 	i;
 
-out = mgf( 1 );
-// returns
+out = mgf( 0.5 );
+// returns ~1.333
 
 out = mgf( -1 );
-// returns 0
+// returns NaN
 
-t = [ 0, 0.5, 1, 1.5, 2, 2.5 ];
+t = [ 0, 0.2, 0.4, 0.6, 0.8, 1 ];
 out = mgf( t );
-// returns [...]
+// returns [ 1, ~1.042, ~1.19, ~1.563, ~2.778, NaN ]
 
-t = new Int8Array( t );
+t = new Float64Array( t );
 out = mgf( t );
-// returns Float64Array( [...] )
+// returns Float64Array( [1,~1.042,~1.19,~1.563,~2.778,NaN] )
 
 t = new Float32Array( 6 );
 for ( i = 0; i < 6; i++ ) {
-	t[ i ] = i * 0.5;
+	t[ i ] = i * 0.2;
 }
 mat = matrix( t, [3,2], 'float32' );
 /*
-	[ 0  0.5
-	  1  1.5
-	  2  2.5 ]
+	[ 0	0.2
+	  0.4  0.6
+	  0.8  1.0  ]
 */
 
 out = mgf( mat );
 /*
-	[
-
-	   ]
+	[ 1.000 ~1.042
+	  ~1.19 ~1.563
+	  ~2.778 NaN  ]
 */
 ```
 
@@ -89,10 +89,10 @@ A [Laplace / Double Exponential](https://en.wikipedia.org/wiki/Laplace / Double 
 var t = [ 0, 0.5, 1, 1.5, 2, 2.5 ];
 
 var out = mgf( t, {
-	'mu': 7,
-	'b': 1
+	'mu': 2,
+	'b': 0.3
 });
-// returns [...]
+// returns [ 1, ~2.781, ~8.12, ~25.19, ~85.31, ~339.23 ]
 ```
 
 For non-numeric `arrays`, provide an accessor `function` for accessing `array` values.
@@ -112,9 +112,11 @@ function getValue( d, i ) {
 }
 
 var out = mgf( data, {
-	'accessor': getValue
+	'accessor': getValue,
+	'mu': 2,
+	'b': 0.3
 });
-// returns [...]
+// returns [ 1, ~2.781, ~8.12, ~25.19, ~85.31, ~339.23 ]
 ```
 
 
@@ -132,16 +134,18 @@ var data = [
 
 var out = mgf( data, {
 	'path': 'x/1',
-	'sep': '/'
+	'sep': '/',
+	'mu': 2,
+	'b': 0.3
 });
 /*
 	[
-		{'x':[0,]},
-		{'x':[1,]},
-		{'x':[2,]},
-		{'x':[3,]},
-		{'x':[4,]},
-		{'x':[5,]}
+		{'x':[0,1]},
+		{'x':[1,~2.781]},
+		{'x':[2,~8.12]},
+		{'x':[3,~25.19]},
+		{'x':[4,~85.31]},
+		{'x':[5,~339.23]}
 	]
 */
 
@@ -154,18 +158,22 @@ By default, when provided a [`typed array`](https://developer.mozilla.org/en-US/
 ``` javascript
 var t, out;
 
-t = new Int8Array( [0,1,2,3,4] );
+t = new Float32Array( [0,0.5,1,1.5,2] );
 
 out = mgf( t, {
-	'dtype': 'int32'
+	'dtype': 'int32',
+	'mu': 2,
+	'b': 0.3
 });
-// returns Int32Array( [...] )
+// returns Int32Array( [1,2,8,25,85] )
 
 // Works for plain arrays, as well...
 out = mgf( [0,0.5,1,1.5,2], {
-	'dtype': 'uint8'
+	'dtype': 'uint8',
+	'mu': 2,
+	'b': 0.3
 });
-// returns Uint8Array( [...] )
+// returns Uint8Array( [1,2,8,25,85] )
 ```
 
 By default, the function returns a new data structure. To mutate the input data structure (e.g., when input values can be discarded or when optimizing memory usage), set the `copy` option to `false`.
@@ -177,34 +185,34 @@ var bool,
 	t,
 	i;
 
-t = [ 0, 0.5, 1, 1.5, 2 ];
+t = [ 0, 0.2, 0.4, 0.6, 0.8, 1 ];
 
 out = mgf( t, {
 	'copy': false
 });
-// returns [...]
+// returns [ 1, ~1.042, ~1.19, ~1.563, ~2.778, NaN ]
 
 bool = ( t === out );
 // returns true
 
 t = new Float32Array( 6 );
 for ( i = 0; i < 6; i++ ) {
-	t[ i ] = i * 0.5;
+	t[ i ] = i * 0.2;
 }
 mat = matrix( t, [3,2], 'float32' );
 /*
-	[ 0  0.5
-	  1  1.5
-	  2  2.5 ]
+	[ 0	0.2
+	  0.4  0.6
+	  0.8  1.0  ]
 */
 
 out = mgf( mat, {
 	'copy': false
 });
 /*
-	[
-
-	   ]
+	[ 1.000 ~1.042
+	  ~1.19 ~1.563
+	  ~2.778 NaN  ]
 */
 
 bool = ( mat === out );
@@ -284,7 +292,7 @@ var data,
 // Plain arrays...
 data = new Array( 10 );
 for ( i = 0; i < data.length; i++ ) {
-	data[ i ] = i * 0.5;
+	data[ i ] = i * 0.1;
 }
 out = mgf( data );
 
@@ -315,7 +323,7 @@ out = mgf( data, {
 // Typed arrays...
 data = new Float32Array( 10 );
 for ( i = 0; i < data.length; i++ ) {
-	data[ i ] = i * 0.5;
+	data[ i ] = i * 0.1;
 }
 out = mgf( data );
 
